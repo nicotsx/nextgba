@@ -77,7 +77,12 @@ export const uploadGame = async (params: { name: string; file: File }) => {
   const { name, file } = params;
 
   const gameId = slugify(name).toLowerCase();
-  const gameConsole = file.name.split(".").pop();
+  const gameConsole = file.name?.split(".").pop() ?? undefined;
+
+  if (!gameConsole) {
+    return { success: false, errors: { game_file: "Invalid file name" } };
+  }
+
   const path = `${BASE_PATH}/${gameId}`;
 
   if (await pathExists(path)) {
@@ -104,7 +109,7 @@ export const uploadGame = async (params: { name: string; file: File }) => {
 export const deleteGame = async (gameId: string) => {
   const path = `${BASE_PATH}/${gameId}`;
 
-  await fs.promises.rmdir(path, { recursive: true });
+  await fs.promises.rm(path, { recursive: true, force: true });
 };
 
 export const getRomFile = async (gameId: string, csl: string) => {
