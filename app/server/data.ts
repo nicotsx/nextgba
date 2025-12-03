@@ -79,8 +79,10 @@ export const uploadGame = async (params: { name: string; file: File }) => {
   const gameId = slugify(name).toLowerCase();
   const gameConsole = file.name?.split(".").pop() ?? undefined;
 
-  if (!gameConsole) {
-    return { success: false, errors: { game_file: "Invalid file name" } };
+  const validation = metadataSchema.shape.console.safeParse(gameConsole);
+
+  if (!validation.success) {
+    return { success: false, errors: { game_file: "Invalid file extension. Allowed: gba, gbc, gb" } };
   }
 
   const path = `${BASE_PATH}/${gameId}`;

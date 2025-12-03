@@ -1,16 +1,16 @@
 import { uploadGame } from "@/server/data";
 import {
 	json,
-	unstable_composeUploadHandlers,
-	unstable_createFileUploadHandler,
 	unstable_createMemoryUploadHandler,
 	unstable_parseMultipartFormData,
 	type ActionFunctionArgs,
 } from "@remix-run/node";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+	// Use MemoryUploadHandler with a safe limit (50MB) to avoid memory exhaustion.
+	// GBA ROMs are typically small (<32MB), so this should be sufficient.
 	const uploadHandler = unstable_createMemoryUploadHandler({
-		maxPartSize: 500_000_000,
+		maxPartSize: 50_000_000,
 	});
 
 	const formData = await unstable_parseMultipartFormData(
